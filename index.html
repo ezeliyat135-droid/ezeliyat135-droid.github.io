@@ -115,3 +115,69 @@ setInterval(draw, 35);
 
 </body>
 </html>
+<hr style="border:1px solid #00ff00; margin-top:50px;">
+
+<h2>⚡ Tools Panel</h2>
+
+<div style="padding:20px;">
+
+<h3>🔐 SHA256 Hash Generator</h3>
+<input type="text" id="hashInput" placeholder="Metin gir..." style="width:300px;">
+<button onclick="generateHash()">Hash</button>
+<p id="hashOutput"></p>
+
+<h3>🔑 Base64 Encode / Decode</h3>
+<input type="text" id="b64Input" placeholder="Metin gir..." style="width:300px;">
+<button onclick="encodeB64()">Encode</button>
+<button onclick="decodeB64()">Decode</button>
+<p id="b64Output"></p>
+
+<h3>🌍 Your Public IP</h3>
+<button onclick="getIP()">Show IP</button>
+<p id="ipOutput"></p>
+
+<h3>🔐 Password Strength Checker</h3>
+<input type="text" id="passInput" placeholder="Şifre dene..." style="width:300px;" onkeyup="checkPassword()">
+<p id="passOutput"></p>
+
+</div>
+
+<script>
+async function generateHash() {
+    const text = document.getElementById("hashInput").value;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hash));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    document.getElementById("hashOutput").innerText = hashHex;
+}
+
+function encodeB64() {
+    const text = document.getElementById("b64Input").value;
+    document.getElementById("b64Output").innerText = btoa(text);
+}
+
+function decodeB64() {
+    const text = document.getElementById("b64Input").value;
+    document.getElementById("b64Output").innerText = atob(text);
+}
+
+async function getIP() {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    document.getElementById("ipOutput").innerText = data.ip;
+}
+
+function checkPassword() {
+    const pass = document.getElementById("passInput").value;
+    let strength = "Zayıf";
+
+    if(pass.length > 8 && /[A-Z]/.test(pass) && /[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass))
+        strength = "Güçlü";
+    else if(pass.length > 6)
+        strength = "Orta";
+
+    document.getElementById("passOutput").innerText = strength;
+}
+</script>
