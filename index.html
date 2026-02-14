@@ -7,182 +7,103 @@
 
 <style>
 body {
-    background: black;
-    color: #00ff00;
-    font-family: monospace;
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: monospace;
+  color: #00ff00;
 }
 
-#terminal {
-    padding: 40px;
-    white-space: pre-line;
-    font-size: 18px;
+.hack-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
 }
 
-hr {
-    border: 1px solid #00ff00;
+#matrix {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
-button {
-    background: black;
-    color: #00ff00;
-    border: 1px solid #00ff00;
-    padding: 5px 10px;
-    margin-top: 5px;
-    cursor: pointer;
+.hack-text {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  z-index: 2;
 }
 
-input {
-    background: black;
-    color: #00ff00;
-    border: 1px solid #00ff00;
-    padding: 5px;
-    margin-top: 5px;
-    width: 300px;
+.hack-text h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
 }
 
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
+#typing {
+  font-size: 18px;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="matrix"></canvas>
+<div class="hack-container">
+  <canvas id="matrix"></canvas>
 
-<div id="terminal"></div>
-
-<hr>
-
-<h2 style="padding-left:40px;">⚡ Tools Panel</h2>
-
-<div style="padding:40px;">
-
-<h3>🔐 SHA256 Hash Generator</h3>
-<input type="text" id="hashInput" placeholder="Metin gir...">
-<br>
-<button onclick="generateHash()">Hash</button>
-<p id="hashOutput"></p>
-
-<h3>🔑 Base64 Encode / Decode</h3>
-<input type="text" id="b64Input" placeholder="Metin gir...">
-<br>
-<button onclick="encodeB64()">Encode</button>
-<button onclick="decodeB64()">Decode</button>
-<p id="b64Output"></p>
-
-<h3>🌍 Your Public IP</h3>
-<button onclick="getIP()">Show IP</button>
-<p id="ipOutput"></p>
-
-<h3>🔐 Password Strength Checker</h3>
-<input type="text" id="passInput" placeholder="Şifre dene..." onkeyup="checkPassword()">
-<p id="passOutput"></p>
-
+  <div class="hack-text">
+    <h1>ACCESSING SYSTEM...</h1>
+    <p id="typing"></p>
+  </div>
 </div>
 
 <script>
-/* TERMINAL YAZI EFEKTİ */
-const text = `
-root@ezeliyat:~# whoami
-ezeliyat135-droid
-
-root@ezeliyat:~# status
-Learning. Building. Improving.
-`;
-
-let i = 0;
-const terminal = document.getElementById("terminal");
-
-function typeWriter() {
-    if (i < text.length) {
-        terminal.innerHTML += text.charAt(i);
-        i++;
-        setTimeout(typeWriter, 40);
-    }
-}
-typeWriter();
-
-/* HASH */
-async function generateHash() {
-    const text = document.getElementById("hashInput").value;
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
-    const hash = await crypto.subtle.digest("SHA-256", data);
-    const hashArray = Array.from(new Uint8Array(hash));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    document.getElementById("hashOutput").innerText = hashHex;
-}
-
-/* BASE64 */
-function encodeB64() {
-    const text = document.getElementById("b64Input").value;
-    document.getElementById("b64Output").innerText = btoa(text);
-}
-
-function decodeB64() {
-    const text = document.getElementById("b64Input").value;
-    document.getElementById("b64Output").innerText = atob(text);
-}
-
-/* IP */
-async function getIP() {
-    const res = await fetch("https://api.ipify.org?format=json");
-    const data = await res.json();
-    document.getElementById("ipOutput").innerText = data.ip;
-}
-
-/* PASSWORD */
-function checkPassword() {
-    const pass = document.getElementById("passInput").value;
-    let strength = "Zayıf";
-
-    if(pass.length > 8 && /[A-Z]/.test(pass) && /[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass))
-        strength = "Güçlü";
-    else if(pass.length > 6)
-        strength = "Orta";
-
-    document.getElementById("passOutput").innerText = strength;
-}
-
-/* MATRIX EFFECT */
 const canvas = document.getElementById("matrix");
 const ctx = canvas.getContext("2d");
 
-canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-const letters = "01";
+const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const fontSize = 14;
 const columns = canvas.width / fontSize;
-const drops = [];
 
-for(let x = 0; x < columns; x++)
-    drops[x] = 1;
+const drops = [];
+for (let x = 0; x < columns; x++) {
+  drops[x] = 1;
+}
 
 function draw() {
-    ctx.fillStyle = "rgba(0,0,0,0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#00ff00";
-    ctx.font = fontSize + "px monospace";
+  ctx.fillStyle = "#0F0";
+  ctx.font = fontSize + "px monospace";
 
-    for(let i = 0; i < drops.length; i++) {
-        const text = letters.charAt(Math.floor(Math.random() * letters.length));
-        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+  for (let i = 0; i < drops.length; i++) {
+    const text = letters[Math.floor(Math.random() * letters.length)];
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975)
-            drops[i] = 0;
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+      drops[i] = 0;
 
-        drops[i]++;
-    }
+    drops[i]++;
+  }
 }
-setInterval(draw, 35);
+
+setInterval(draw, 33);
+
+const text = "Welcome, ezeliyat135-droid... Access Granted.";
+let i = 0;
+
+function typing() {
+  if (i < text.length) {
+    document.getElementById("typing").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typing, 60);
+  }
+}
+
+typing();
 </script>
 
 </body>
