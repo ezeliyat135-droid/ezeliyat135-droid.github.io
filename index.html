@@ -3,107 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ezeliyat | Portfolio</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+<title>ezeliyat135-droid</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-    font-family:'Poppins',sans-serif;
-    background:#0f172a;
-    color:white;
+body {
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    margin: 0;
+    overflow: hidden;
 }
 
-header{
-    height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
+#terminal {
+    padding: 40px;
+    white-space: pre-line;
+    font-size: 18px;
 }
 
-h1{
-    font-size:3rem;
-    background:linear-gradient(90deg,#38bdf8,#22d3ee);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+.cursor {
+    display: inline-block;
+    width: 10px;
+    background: #00ff00;
+    animation: blink 1s infinite;
 }
 
-.typing{
-    margin-top:15px;
-    font-size:1.2rem;
-    opacity:0.8;
+@keyframes blink {
+    0% {opacity: 1;}
+    50% {opacity: 0;}
+    100% {opacity: 1;}
 }
 
-.btn{
-    margin-top:30px;
-    padding:12px 25px;
-    border-radius:30px;
-    background:#22d3ee;
-    color:#0f172a;
-    text-decoration:none;
-    font-weight:600;
-    transition:0.3s;
-}
-
-.btn:hover{
-    background:#38bdf8;
-    transform:scale(1.05);
-}
-
-section{
-    padding:80px 20px;
-    text-align:center;
-}
-
-.card{
-    background:#1e293b;
-    padding:20px;
-    border-radius:15px;
-    margin:20px auto;
-    max-width:500px;
-    transition:0.3s;
-}
-
-.card:hover{
-    transform:translateY(-10px);
-    box-shadow:0 10px 20px rgba(0,0,0,0.5);
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
 </style>
 </head>
-
 <body>
 
-<header>
-    <h1>Merhaba 👋 Ben Ezeliyat</h1>
-    <p class="typing">Linux kullanıcısı • Yazılım Öğreniyorum • GitHub Developer</p>
-    <a href="https://github.com/ezeliyat135-droid" class="btn">GitHub Profilim</a>
-</header>
+<canvas id="matrix"></canvas>
 
-<section>
-    <h2>🚀 Hakkımda</h2>
-    <div class="card">
-        <p>Pop!_OS kullanıyorum, yazılım öğreniyorum ve kendi projelerimi geliştiriyorum.</p>
-    </div>
-</section>
+<div id="terminal"></div>
 
-<section>
-    <h2>🛠️ Yetenekler</h2>
-    <div class="card">
-        <p>HTML • CSS • Linux • Git • Terminal</p>
-    </div>
-</section>
+<script>
+const text = `
+root@ezeliyat:~# whoami
+ezeliyat135-droid
 
-<section>
-    <h2>📬 İletişim</h2>
-    <div class="card">
-        <p>GitHub üzerinden bana ulaşabilirsin.</p>
-    </div>
-</section>
+root@ezeliyat:~# skills
+Linux
+Git
+HTML
+Terminal
+
+root@ezeliyat:~# status
+Learning. Building. Breaking. Improving.
+
+root@ezeliyat:~# github
+https://github.com/ezeliyat135-droid
+`;
+
+let i = 0;
+const speed = 40;
+const terminal = document.getElementById("terminal");
+
+function typeWriter() {
+    if (i < text.length) {
+        terminal.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+    }
+}
+typeWriter();
+
+/* MATRIX EFFECT */
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+const letters = "01";
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = [];
+
+for(let x = 0; x < columns; x++)
+    drops[x] = 1;
+
+function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff00";
+    ctx.font = fontSize + "px monospace";
+
+    for(let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+
+        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+
+        drops[i]++;
+    }
+}
+setInterval(draw, 35);
+</script>
 
 </body>
 </html>
-
